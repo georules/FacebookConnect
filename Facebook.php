@@ -11,9 +11,9 @@
 class Facebook {
 	
 	private static $instance;
-	private static $appid = '659774414034474';
-	private static $appsecret = '6dcb7f4d1cb488d627acd60b5b8b10aa';
-	private static $callbackurl = 'http://localhost/fb/';
+	private static $appid = '{your-app-id}';
+	private static $appsecret = '{your-app-secret}';
+	private static $callbackurl = '{callback-url}';
 	private static $state; //also stored in session
 	private static $access_token;
 	private static $expiretime;
