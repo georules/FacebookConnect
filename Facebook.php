@@ -18,7 +18,7 @@ class Facebook {
 	private static $access_token;
 	private static $expiretime;
 	
-	private $user;
+	public $user;
 	
 	/**
 	 * Here we are going to get the information from Facebook about the person that we are dealing with.
@@ -30,9 +30,10 @@ class Facebook {
 			self::$expiretime = $_SESSION['FacebookConnect']['expiretime'] = time() + func_get_arg(1);
 		}
 		else {
-			$access_token = $_SESSION['FacebookConnect']['access_token'];
-			$expiretime = $_SESSION['FacebookConnect']['expiretime'];
+			self::$access_token = $_SESSION['FacebookConnect']['access_token'];
+			self::$expiretime = $_SESSION['FacebookConnect']['expiretime'];
 		}
+		
 		
 		$ch = curl_init();
 		curl_setopt($ch, CURLOPT_URL, 'https://graph.facebook.com/me?access_token='.self::$access_token);
@@ -79,9 +80,9 @@ class Facebook {
 	 * has to contact Facebook, get a response, then send the access code back
 	 */
 	public static function connectionPartOne() {
-		header('Location: https://www.facebook.com/dialog/oauth?client_id=659774414034474
-																&redirect_uri='. self::$callbackurl.'
-																&state='.self::createState());
+		header('Location: https://www.facebook.com/dialog/oauth?client_id='.self::$appid.
+																'&redirect_uri='. self::$callbackurl.
+																'&state='.self::createState());
 	}
 	public static function connectionPartTwo($finalcallback) {
 		//first, check state
@@ -103,7 +104,7 @@ class Facebook {
 		if($_REQUEST['code'] != '') {
 			//do the final part of the connection
 			$ch = curl_init();
-			curl_setopt($ch, CURLOPT_URL, 'https://graph.facebook.com/oauth/access_token?client_id=659774414034474'.
+			curl_setopt($ch, CURLOPT_URL, 'https://graph.facebook.com/oauth/access_token?client_id='.self::$appid.
 																			'&redirect_uri='.self::$callbackurl.
 																			'&client_secret='.self::$appsecret.
 																			'&code='.$_REQUEST['code'].
@@ -118,6 +119,7 @@ class Facebook {
 			$return = explode('&', $return);
 			$access_token = explode('=', $return[0]);
 			$expires = explode('=', $return[1]);
+			
 			new Facebook($access_token[1], $expires[1]);
 			
 			header('Location: '.$finalcallback);

@@ -10,6 +10,6 @@ elseif(!isset($_GET['finished']))
 
 else {
 	$fb = new Facebook();
-	var_dump($fb);
+	var_dump($fb->user);
 }
 
