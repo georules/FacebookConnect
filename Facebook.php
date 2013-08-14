@@ -10,6 +10,7 @@
 
 class Facebook {
 	
+  const FBCONFIG = "config.json";
 	private static $instance;
 	private static $appid = '{your-app-id}';
 	private static $appsecret = '{your-app-secret}';
@@ -24,7 +25,12 @@ class Facebook {
 	 * Here we are going to get the information from Facebook about the person that we are dealing with.
 	 */
 	public function __construct() {
-		
+
+    $config = json_decode(file_get_contents(dirname(__FILE__) . DIRECTORY_SEPARATOR . self::FBCONFIG));
+    self::$appid = $config->app_id;
+    self::$appsecret = $config->app_secret;
+    self::$callbackurl = $config->callback_url;
+    echo self::$appid;
 		if(func_num_args() == 2) {
 			self::$access_token = $_SESSION['FacebookConnect']['access_token'] = func_get_arg(0);
 			self::$expiretime = $_SESSION['FacebookConnect']['expiretime'] = time() + func_get_arg(1);
