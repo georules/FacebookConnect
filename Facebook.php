@@ -10,10 +10,14 @@
 
 class Facebook {
 	
-	const FBCONFIG = "config.json";
+	const FBCONFIG = "config.php";
 	private static $state; //also stored in session
 	private static $access_token;
 	private static $expiretime;
+	private static $appid;
+	private static $appsecret;
+	private static $callbackurl;
+	private static $finalcallback;
 	
 	public $user;
 	
@@ -22,18 +26,32 @@ class Facebook {
 	 */
 	public function __construct() {
 
-		$config = json_decode(file_get_contents(dirname(__FILE__) . DIRECTORY_SEPARATOR . self::FBCONFIG));
-		self::$appid = $config->app_id;
-		self::$appsecret = $config->app_secret;
-		self::$callbackurl = $config->callback_url;
+		include(dirname(__FILE__) . DIRECTORY_SEPARATOR . self::FBCONFIG);
+		self::$appid = $config['app_id'];
+		self::$appsecret = $config['app_secret'];
+		self::$callbackurl = $config['callback_url'];
+		self::$finalcallback = $config['final_callback'];
 		echo self::$appid;
 		if(func_num_args() == 2) {
 			self::$access_token = $_SESSION['FacebookConnect']['access_token'] = func_get_arg(0);
 			self::$expiretime = $_SESSION['FacebookConnect']['expiretime'] = time() + func_get_arg(1);
 		}
 		else {
-			self::$access_token = $_SESSION['FacebookConnect']['access_token'];
-			self::$expiretime = $_SESSION['FacebookConnect']['expiretime'];
+			if(!isset($_SESSION['FacebookConnect']) || !is_array($_SESSION['FacebookConnect'])) {
+				//start login procedure
+				self::connectionPartOne();	
+				$_SESSION['FacebookConnect']['inprocess'] = true;
+			}
+			elseif($_SESSION['FacebookConnect']['inprocess']) {
+				if(!isset($_REQUEST['code'])) {
+					self::connectionPartOne();
+				}
+				self::connectionPartTwo(self::$finalcallback);
+			}
+			else {
+				self::$access_token = $_SESSION['FacebookConnect']['access_token'];
+				self::$expiretime = $_SESSION['FacebookConnect']['expiretime'];
+			}
 		}
 		
 		
