@@ -1,6 +1,5 @@
 <?php
 
-	$config = array("app_id" => "your-app-id",
-  					"app_secret" => "your-app-secret",
-					"callback_url" => "callback-url-to-continue-loading",
-					"final_callback" => "final-callback-url" );
+define("FB_APP_ID", "your-app-id");
+define("FB_APP_SECRET", "your-app-secret");
+define("FB_CALLBACK_URL", "callback-url");
