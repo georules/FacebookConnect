@@ -10,16 +10,14 @@ require_once('config.php');
 
 class Facebook {
 	
-	const FBCONFIG = "config.php";
-
 	private static $instance;
 	private static $appid = FB_APP_ID;
 	private static $appsecret = FB_APP_SECRET;
 	private static $callbackurl = FB_CALLBACK_URL;
+	private static $finalcallback = FB_FINAL_CALLBACK_URL;
 	private static $state; //also stored in session
 	private static $access_token;
 	private static $expiretime;
-	private static $finalcallback;
 	
 	public $user;
 	
@@ -27,12 +25,6 @@ class Facebook {
 	 * Here we are going to get the information from Facebook about the person that we are dealing with.
 	 */
 	public function __construct() {
-
-		include(dirname(__FILE__) . DIRECTORY_SEPARATOR . self::FBCONFIG);
-		self::$appid = $config['app_id'];
-		self::$appsecret = $config['app_secret'];
-		self::$callbackurl = $config['callback_url'];
-		self::$finalcallback = $config['final_callback'];
 
 		if(func_num_args() == 2) {
 			self::$access_token = $_SESSION['FacebookConnect']['access_token'] = func_get_arg(0);
